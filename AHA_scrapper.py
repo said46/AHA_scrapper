@@ -1,19 +1,16 @@
 from selenium import webdriver
-# from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import InvalidSelectorException
 from selenium.webdriver.edge.options import Options as EdgeOptions
 import ctypes
-import time
 import os
 import openpyxl as xl
 
 
 def message_box(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
+
 
 #  Styles:
 #  0 : OK *** #  1 : OK | Cancel *** 2 : Abort | Retry | Ignore *** 3 : Yes | No | Cancel ***  
@@ -42,13 +39,13 @@ def prepare_tag_for_search(tag: str, asset: str) -> str:
     if middle_part == 'PDSH':
         middle_part = 'PD*'
     # temp:
-    #if middle_part == 'XX':
+    # if middle_part == 'XX':
     #    middle_part = 'X*'          
     # temp end
     # temp: 
     # if middle_part == 'XZGC':
     #    middle_part = 'XGC'        
-    #if middle_part == 'XZGO':
+    # if middle_part == 'XZGO':
     #    middle_part = 'XGO'          
     # temp end
     result = '*' + asset + '-' + tag[:3] + '-' + middle_part + '-' + tag[last_part_beginning_index:]
@@ -83,15 +80,15 @@ sheet = wb['Input Data']
 for count, row in enumerate(range(2, sheet.max_row + 1)):
     # if an empty row - stop
     if sheet.cell(row, excel_columns["tag"]).value in (None, ''):
-        break    
+        break
 
-    # stop for test purposes
+        # stop for test purposes
     if count == 50000:
         break
 
     # no need to process the already processed rows
     if sheet.cell(row, excel_columns["folder_link"]).value not in (None, '') or \
-       sheet.cell(row, excel_columns["result"]).value not in (None, ''):
+            sheet.cell(row, excel_columns["result"]).value not in (None, ''):
         continue
 
     sheet.cell(row, excel_columns["doc_link"]).value = ''
@@ -101,19 +98,20 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
 
     card = sheet.cell(row, excel_columns["card"]).value
 
-    # adding 300- before the tag exculdes a lot of excessive results such cables, but 
+    # adding 300- before the tag excludes a lot of excessive results such cables, but
     # may prevent some tags with 3000- to be found, so you can try 3000- after 300-
     # by replacing key0[:-1] with key0 and start the script one more time, clearing the
-    # Result columns in the excel file (key0_param = key0)
-    
+    # Result columns in the Excel file (key0_param = key0)
+
     key0_param = key0[:-1]
-    key0_param = key0
+
     tag_prepared_for_search = prepare_tag_for_search(sheet.cell(row, excel_columns["tag"]).value, key0_param)
     sheet.cell(row, excel_columns["tag_prep"]).value = tag_prepared_for_search
-    sheet.cell(row, excel_columns["tag_prep"]).hyperlink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/search/Search.asp?" \
-                                   "obj_type_id=4" \
-                                   "&obj_type_name=Tag&cls_obj_name=&" \
-                                  f"obj_name={tag_prepared_for_search}&obj_desc=*&key0={key0}"
+    sheet.cell(row, excel_columns[
+        "tag_prep"]).hyperlink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/search/Search.asp?" \
+                                 "obj_type_id=4" \
+                                 "&obj_type_name=Tag&cls_obj_name=&" \
+                                 f"obj_name={tag_prepared_for_search}&obj_desc=*&key0={key0}"
     sheet.cell(row, excel_columns["tag_prep"]).style = "Hyperlink"
 
     # 2 tries to search, one with desc == '*', if no success, with desc == first letter of tag desc + '*'
@@ -128,9 +126,9 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         llink = 'http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch' \
                 '&obj_type_id=4' \
                 '&obj_type_name=Tag' \
-               f'&cls_obj_name=&obj_name={tag_prepared_for_search}' \
-               f'&obj_desc={obj_desc}' \
-               f'&key0={key0}'
+                f'&cls_obj_name=&obj_name={tag_prepared_for_search}' \
+                f'&obj_desc={obj_desc}' \
+                f'&key0={key0}'
         if i == 0:
             sheet.cell(row, excel_columns["tag"]).hyperlink = llink
         sheet.cell(row, excel_columns["tag"]).style = "Hyperlink"
@@ -143,13 +141,14 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         try:
             node_id = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute(name='id')
         except NoSuchElementException:
-            sheet.cell(row, excel_columns["result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
+            sheet.cell(row, excel_columns[
+                "result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
 
         if node_id != '':
             llink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ClickNode" \
                     "&ScrollPosX=0" \
                     "&ScrollPosY=0" \
-                   f"&TreeNodeID={node_id}" \
+                    f"&TreeNodeID={node_id}" \
                     "&IsObjectNode=False"
             edgeBrowser.get(llink)
             break
@@ -159,12 +158,10 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     # Node 'Document(s)' is not found
     if node_id == '':
         continue
-    
+
     # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT'
-    xpaths = []
-    xpaths.append("//a[contains(translate(., 'loop', 'LOOP'), 'LOOP') and " \
-                  "not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and " \
-                  "not(contains(translate(., 'fire', 'FIRE'), 'FIRE'))]")
+    xpaths = [
+        "//a[contains(translate(., 'loop', 'LOOP'), 'LOOP') and not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and ""not(contains(translate(., 'fire', 'FIRE'), 'FIRE'))]"]
     if card == "ALF111":
         xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")
 
@@ -187,7 +184,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
 
     llink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch&" \
             "obj_type_id=7&obj_type_name=Document&cls_obj_name=AhaQryStdRel.FindObjectWoRev%28%27Document%27%2C%27document+issue+date%27%29&" \
-           f"obj_name={doc_number}*&obj_desc=*"
+            f"obj_name={doc_number}*&obj_desc=*"
     llink = llink.replace('#', '%23')
     edgeBrowser.get(llink)
 
@@ -205,11 +202,12 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     llink = f"http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/relationsandmethods.asp?TreeNodeID={node_id}&ScrollPosX=0&ScrollPosY=0"
     edgeBrowser.get(llink)
 
-    element_xpath = "//a[text()='Jump in Unica compound document']"
+    element_xpath = "//a[text()='Jump in UNICA compound document']"
     try:
         llink = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute("href")
     except NoSuchElementException:
-        sheet.cell(row, excel_columns["result"]).value = "Node with text equal to 'Jump in Unica compound document' is not found"
+        sheet.cell(row, excel_columns[
+            "result"]).value = "Node with text equal to 'Jump in Unica compound document' is not found"
         continue
     except InvalidSelectorException:
         sheet.cell(row, excel_columns["result"]).value = f'Invalid XPATH={element_xpath} expression'
@@ -235,7 +233,8 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         sheet.cell(row, excel_columns["doc_link"]).value = doc_number
         sheet.cell(row, excel_columns["doc_link"]).style = "Hyperlink"
     except NoSuchElementException:
-        sheet.cell(row, excel_columns["result"]).value = "Node with text containing 'LOOP DIAGRAM' (case insensitive) is not found"
+        sheet.cell(row, excel_columns[
+            "result"]).value = "Node with text containing 'LOOP DIAGRAM' (case insensitive) is not found"
         continue
     except InvalidSelectorException:
         sheet.cell(row, excel_columns["result"]).value = f'Invalid XPATH={element_xpath} expression'
