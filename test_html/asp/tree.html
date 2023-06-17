@@ -1,0 +1,399 @@
+<HTML>
+<HEAD>
+	<TITLE>AHA Tree View</TITLE>
+	
+	<LINK REL=STYLESHEET TYPE="text/css" HREF="../style/treeview.css" />
+	
+	<SCRIPT LANGUAGE="javascript">
+	<!--
+	
+	//
+	// Scroll to specified coordinates.  This is called after the 
+	// document has loaded.
+	//
+	function DoScroll(x, y, sSelNodeID)
+	{
+		var oSelectedItem;
+		
+		//alert("scolling to " + x + "," + y);
+		
+		//Set the focus onto the selected node.
+		/*
+		//TODO TEST WITH NETSCAPE
+		oSelectedItem = document.all.item(sSelNodeID);
+		if (oSelectedItem != null)
+		{
+			oSelectedItem.focus();
+		}*/
+		
+		window.scrollTo(x,y);
+	}
+
+	//
+	// Handle node expand event
+	//
+	function GetNodeCoords(strNodeID, strIsObjectNode)
+	{
+		var scrollx;			//x position of the selected node
+		var scrolly;			//y position of the selected node
+		var pointer_screen_y;	//pointer position, relative to working area
+		var pointer_document_y;	//pointer position, relative to document start
+		var oElement;
+		var oParentInDoc;
+									
+		
+		//If the browser being used is not IE then we assume that Netscape is being used.
+		//Would have to add another clause to support new browsers.
+		scrollx = window.pageXOffset;
+		scrolly = window.pageYOffset;
+		
+		
+		// Store the scroll data in the treeview form, so that it
+		// can be posted back to the server.
+		document.frmTreeView.TreeNodeID.value = strNodeID;
+		document.frmTreeView.ScrollPosX.value = scrollx;
+		document.frmTreeView.ScrollPosY.value = scrolly;
+		document.frmTreeView.IsObjectNode.value = strIsObjectNode;
+		
+		//alert("scoll to set to " + document.frmTreeView.ScrollPosX.value + "," + document.frmTreeView.ScrollPosY.value);
+		return 0;
+	}
+	
+	//
+	// Handle node display event
+	//
+	function DisplayObject(strObjectID)
+	{	
+		var strURL;
+		
+		// Update the objects view to show that something is happening.
+		top.main.objects.document.open("text/html");
+		top.main.objects.document.write("<HTML><font color=red>Searching..</font></HTML>");
+		top.main.objects.document.close();
+		
+		strURL = "../relationsandmethods.asp"
+				 + "?TreeNodeID=" + strObjectID
+				 + "&ScrollPosX=" + document.frmTreeView.ScrollPosX.value
+				 + "&ScrollPosY=" + document.frmTreeView.ScrollPosY.value;
+		
+		// Send request to the objects window
+		top.main.objects.location = strURL;
+	}
+	
+	//
+	// Submit the treeview params form.
+	//
+	function SubmitTreeForm()
+	{
+		document.frmTreeView.submit();
+	}
+	
+	//-->
+	</SCRIPT>
+</HEAD>
+<BODY onLoad="DoScroll(0, 0, '2572173');">
+<FORM NAME="frmTreeView" METHOD="POST" ACTION="tree.asp" TARGET="tree">
+	<INPUT TYPE="HIDDEN" NAME="Option" VALUE="ClickNode" />
+	
+	<!-- Scroll position to show the current active node when the tree 
+	is refreshed -->
+	<INPUT TYPE="HIDDEN" NAME="ScrollPosX" VALUE="0" />
+	<INPUT TYPE="HIDDEN" NAME="ScrollPosY" VALUE="0" />
+	
+	<!-- Information about the current node -->
+	<INPUT TYPE="HIDDEN" NAME="TreeNodeID" VALUE="0" />
+	<INPUT TYPE="HIDDEN" NAME="IsObjectNode" VALUE="False" />
+</FORM>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572146" ID="Expand2572146" 
+			onClick="javascript:return GetNodeCoords('2572146', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			<B CLASS="query" >Search for Tag Name='*001-PZT-105*' Desc='*well*'</B>
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572159" ID="Expand2572159" 
+			onClick="javascript:return GetNodeCoords('2572159', 'True');"><img border=0 class="expansion-icon" src="../images/minus-icon.gif" /></A>
+			<B CLASS="query" >Search for Tag Name='*001-PZT-115*' Desc='*well*'</B>
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572160" ID="Expand2572160" 
+			onClick="javascript:return GetNodeCoords('2572160', 'True');"><img border=0 class="expansion-icon" src="../images/minus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572160"
+				ID="2572160" HREF="javascript:DisplayObject('2572160');" 
+				onClick="javascript:return GetNodeCoords('2572160', 'True');">400-001-PZT-115<SPAN STYLE="color:#336699;" >, PRESS TRANS SEAL - WELL11 FLOWLINE</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572161" ID="Expand2572161" 
+			onClick="javascript:return GetNodeCoords('2572161', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572161"
+				ID="2572161" HREF="javascript:DisplayObject('2572161');" 
+				onClick="javascript:return GetNodeCoords('2572161', 'False');">Document(s) (by doc.number)  (117)</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572162" ID="Expand2572162" 
+			onClick="javascript:return GetNodeCoords('2572162', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572162"
+				ID="2572162" HREF="javascript:DisplayObject('2572162');" 
+				onClick="javascript:return GetNodeCoords('2572162', 'False');">Document(s) (by discipline)</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572163" ID="Expand2572163" 
+			onClick="javascript:return GetNodeCoords('2572163', 'False');"><img border=0 class="expansion-icon" src="../images/minus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572163"
+				ID="2572163" HREF="javascript:DisplayObject('2572163');" 
+				onClick="javascript:return GetNodeCoords('2572163', 'False');">Document(s)</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572172" ID="Expand2572172" 
+			onClick="javascript:return GetNodeCoords('2572172', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572172"
+				ID="2572172" HREF="javascript:DisplayObject('2572172');" 
+				onClick="javascript:return GetNodeCoords('2572172', 'True');">1000-S-90-30-D-4502-11-E#XA<SPAN STYLE="color:#336699;" >, TYPICAL HYDRAULIC HOOK-UP SHUTDOWN ACTUATED VALVE</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572173" ID="Expand2572173" 
+			onClick="javascript:return GetNodeCoords('2572173', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572173"
+				ID="2572173" HREF="javascript:DisplayObject('2572173');" 
+				onClick="javascript:return GetNodeCoords('2572173', 'True');">4000-T-01-30-D-4900-25-E#XA<SPAN STYLE="color:#336699;" >, INSTRUMENT LOOP DIAGRAM 400-001-P-115</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572174" ID="Expand2572174" 
+			onClick="javascript:return GetNodeCoords('2572174', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572174"
+				ID="2572174" HREF="javascript:DisplayObject('2572174');" 
+				onClick="javascript:return GetNodeCoords('2572174', 'True');">4000-T-01-64-D-0017-01-E#XA<SPAN STYLE="color:#336699;" >, Well LA-521 Heat Tracing Cable Block diagram</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572175" ID="Expand2572175" 
+			onClick="javascript:return GetNodeCoords('2572175', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572175"
+				ID="2572175" HREF="javascript:DisplayObject('2572175');" 
+				onClick="javascript:return GetNodeCoords('2572175', 'True');">4000-T-01-64-D-0017-01-R#XA<SPAN STYLE="color:#336699;" >, Well LA-521 Heat Tracing Cable Block diagram</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572176" ID="Expand2572176" 
+			onClick="javascript:return GetNodeCoords('2572176', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572176"
+				ID="2572176" HREF="javascript:DisplayObject('2572176');" 
+				onClick="javascript:return GetNodeCoords('2572176', 'True');">4000-T-40-64-A-3881-01-E#XT<SPAN STYLE="color:#336699;" >, Lunskoye Field Platform LUN-A Winterisation Distribution Panel Schedule LP-4070</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572177" ID="Expand2572177" 
+			onClick="javascript:return GetNodeCoords('2572177', 'True');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="object_link" NAME="2572177"
+				ID="2572177" HREF="javascript:DisplayObject('2572177');" 
+				onClick="javascript:return GetNodeCoords('2572177', 'True');">4000-T-40-64-A-3881-01-R#XT<SPAN STYLE="color:#336699;" >, Lunskoye Field Platform LUN-A Winterisation Distribution Panel Schedule LP-4070</SPAN></A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572164" ID="Expand2572164" 
+			onClick="javascript:return GetNodeCoords('2572164', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572164"
+				ID="2572164" HREF="javascript:DisplayObject('2572164');" 
+				onClick="javascript:return GetNodeCoords('2572164', 'False');">Is serviced by Equipment</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572165" ID="Expand2572165" 
+			onClick="javascript:return GetNodeCoords('2572165', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572165"
+				ID="2572165" HREF="javascript:DisplayObject('2572165');" 
+				onClick="javascript:return GetNodeCoords('2572165', 'False');">Is classifed as</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572166" ID="Expand2572166" 
+			onClick="javascript:return GetNodeCoords('2572166', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572166"
+				ID="2572166" HREF="javascript:DisplayObject('2572166');" 
+				onClick="javascript:return GetNodeCoords('2572166', 'False');">Has for Master-Tag</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572167" ID="Expand2572167" 
+			onClick="javascript:return GetNodeCoords('2572167', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572167"
+				ID="2572167" HREF="javascript:DisplayObject('2572167');" 
+				onClick="javascript:return GetNodeCoords('2572167', 'False');">Is connected From Tag(s)  (2)</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572168" ID="Expand2572168" 
+			onClick="javascript:return GetNodeCoords('2572168', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572168"
+				ID="2572168" HREF="javascript:DisplayObject('2572168');" 
+				onClick="javascript:return GetNodeCoords('2572168', 'False');">Is connected To Tag(s)</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572169" ID="Expand2572169" 
+			onClick="javascript:return GetNodeCoords('2572169', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572169"
+				ID="2572169" HREF="javascript:DisplayObject('2572169');" 
+				onClick="javascript:return GetNodeCoords('2572169', 'False');">Belongs to Plant</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572170" ID="Expand2572170" 
+			onClick="javascript:return GetNodeCoords('2572170', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572170"
+				ID="2572170" HREF="javascript:DisplayObject('2572170');" 
+				onClick="javascript:return GetNodeCoords('2572170', 'False');">Located within the Area</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD><TD><IMG WIDTH="10" SRC="../images/blank-space.gif"></TD>
+		<TD VALIGN="middle">
+			<NOBR>
+			<A HREF="javascript:SubmitTreeForm();" 
+			NAME="Expand2572171" ID="Expand2572171" 
+			onClick="javascript:return GetNodeCoords('2572171', 'False');"><img border=0 class="expansion-icon" src="../images/plus-icon.gif" /></A>
+			
+				<A CLASS="relation_link" NAME="2572171"
+				ID="2572171" HREF="javascript:DisplayObject('2572171');" 
+				onClick="javascript:return GetNodeCoords('2572171', 'False');">Designed By</A>
+				
+			</NOBR>
+		</TD>
+		</TR>
+		</TABLE>
+		</BODY></HTML>
