@@ -1,6 +1,6 @@
 import os
 
-os.system("cls")
-
-log = ['1111', '2222']
-print('\r\n'.join(log))
+os.system('cls')
+a = (1, 2, 3)
+x, y, z = a
+print(f"{x=} {y=} {z=}")

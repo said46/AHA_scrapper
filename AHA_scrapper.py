@@ -53,6 +53,7 @@ def prepare_tag_for_search(tag: str, asset: str) -> str:
 
 
 excel_columns = {"tag": 1, "desc": 2, "card": 3, "folder_link": 4, "doc_link": 5, "tag_prep": 6, "result": 12}
+search_excel_name = '_search.xlsx'
 
 os.system("cls")
 
@@ -71,7 +72,7 @@ except Exception as e:
 key0 = "3000"
 
 try:
-    wb = xl.load_workbook('Data from DCS Extract.xlsx')
+    wb = xl.load_workbook(search_excel_name)
 except Exception as e:
     print(f'Cannot open the excel file: {str(e)}')
     quit()
@@ -82,7 +83,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     if sheet.cell(row, excel_columns["tag"]).value in (None, ''):
         break
 
-        # stop for test purposes
+    # stop for test purposes
     if count == 50000:
         break
 
@@ -115,21 +116,20 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     sheet.cell(row, excel_columns["tag_prep"]).style = "Hyperlink"
 
     # 2 tries to search, one with desc == '*', if no success, with desc == first letter of tag desc + '*'
-    for i in range(2):
-        if i == 0:
-            obj_desc = '*'
-        else:
-            if sheet.cell(row, excel_columns["desc"]).value in ('', None):
-                break
-            obj_desc = sheet.cell(row, excel_columns["desc"]).value[0] + '*'
+    obj_descs = list()
+    obj_descs.append('*')
+    if sheet.cell(row, excel_columns["desc"]).value not in ('', None):
+        obj_descs.append(sheet.cell(row, excel_columns["desc"]).value[0] + '*')
 
+    node_id = ''
+    for obj_desc in obj_descs:
         llink = 'http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch' \
                 '&obj_type_id=4' \
                 '&obj_type_name=Tag' \
                 f'&cls_obj_name=&obj_name={tag_prepared_for_search}' \
                 f'&obj_desc={obj_desc}' \
                 f'&key0={key0}'
-        if i == 0:
+        if obj_desc == '*':
             sheet.cell(row, excel_columns["tag"]).hyperlink = llink
         sheet.cell(row, excel_columns["tag"]).style = "Hyperlink"
         edgeBrowser.get(llink)
@@ -141,8 +141,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         try:
             node_id = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute(name='id')
         except NoSuchElementException:
-            sheet.cell(row, excel_columns[
-                "result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
+            sheet.cell(row, excel_columns["result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
 
         if node_id != '':
             llink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ClickNode" \
@@ -159,11 +158,13 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     if node_id == '':
         continue
 
-    # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT'
-    xpaths = [
-        "//a[contains(translate(., 'loop', 'LOOP'), 'LOOP') and not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and ""not(contains(translate(., 'fire', 'FIRE'), 'FIRE'))]"]
+    # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT' if ALF111
+    xpaths = []
     if card == "ALF111":
         xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")
+    xpaths.append("//a[contains(translate(., 'loop', 'LOOP'), 'LOOP') and "
+                  "not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) "
+                  "and not(contains(translate(., 'fire', 'FIRE'), 'FIRE'))]")
 
     doc_number = ''
 
@@ -202,7 +203,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     llink = f"http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/relationsandmethods.asp?TreeNodeID={node_id}&ScrollPosX=0&ScrollPosY=0"
     edgeBrowser.get(llink)
 
-    element_xpath = "//a[text()='Jump in UNICA compound document']"
+    element_xpath = "//a[text()='Jump in Unica compound document']"
     try:
         llink = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute("href")
     except NoSuchElementException:
@@ -214,8 +215,6 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         continue
 
     edgeBrowser.get(llink)
-
-    # time.sleep(3)
 
     window_after = edgeBrowser.window_handles[1]
     edgeBrowser.switch_to.window(window_after)
@@ -243,12 +242,12 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     # save Excel file every 10 rows
     if count % 10 == 0 and count > 0:
         try:
-            wb.save('Data from DCS Extract.xlsx')
+            wb.save(search_excel_name)
         except Exception as e:
             print(f'Cannot save the excel file: {str(e)}')
 
 try:
-    wb.save('Data from DCS Extract.xlsx')
+    wb.save(search_excel_name)
 except Exception as e:
     print(f'Cannot save the excel file: {str(e)}')
 
