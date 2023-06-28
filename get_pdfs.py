@@ -60,5 +60,6 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     sheet.cell(row, 2).value = f'downloaded'
     save_excel_file()
 
+# input("Press Enter to continue...")
 edgeBrowser.quit()
 wb.close()

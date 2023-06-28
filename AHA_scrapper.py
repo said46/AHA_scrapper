@@ -16,7 +16,13 @@ def message_box(title, text, style):
 #  0 : OK *** #  1 : OK | Cancel *** 2 : Abort | Retry | Ignore *** 3 : Yes | No | Cancel ***  
 #  4 : Yes | No *** 5 : Retry | Cancel *** 6 : Cancel | Try Again | Continue
 
+
 def prepare_tag_for_search(tag: str, asset: str) -> str:
+    # temp begin
+    # if tag[:11] == "%%O052LI001":
+    #     result = '*' + asset + '-' + tag[3:6] + '-LI-' + tag[8:12]
+    #     return result
+    # temp end
     if tag[-3] == '_':
         tag = tag[:-3]
     if tag[0:2] == '%%':
@@ -26,23 +32,25 @@ def prepare_tag_for_search(tag: str, asset: str) -> str:
     else:
         last_part_beginning_index = -3
     middle_part = tag[3:last_part_beginning_index]
-    if middle_part[1:] in ('ICA', 'IA', 'I', 'IC'):
+    if middle_part[1:] in ('ICA', 'IA', 'I', 'IC') and middle_part != 'HIC':
         middle_part = middle_part[0] + 'T'
-    if middle_part == 'XZGV':
+    if middle_part in ('XZGV', 'XZGOC'):
         middle_part = 'XZV'
-    if middle_part == 'XGV':
+    if middle_part in ('XGV', 'XGOC'):
         middle_part = 'XV'
-    if middle_part == 'HGV':
+    if middle_part in ('HGV', 'HIC', 'HIQ'):
         middle_part = 'HV'
     if middle_part in ('PDI', 'PDIA', 'PDIC', 'PDICA'):
         middle_part = 'PDT'
     if middle_part == 'PDSH':
         middle_part = 'PD*'
-    # temp:
+    # temp begin
     # if middle_part == 'XX':
-    #    middle_part = 'X*'          
+    #     middle_part = 'XA'          
+    # if middle_part == 'XS':
+    #     middle_part = 'XA'         
     # temp end
-    # temp: 
+    # temp begin 
     # if middle_part == 'XZGC':
     #    middle_part = 'XGC'        
     # if middle_part == 'XZGO':
@@ -52,7 +60,9 @@ def prepare_tag_for_search(tag: str, asset: str) -> str:
     return result
 
 
+
 excel_columns = {"tag": 1, "desc": 2, "card": 3, "folder_link": 4, "doc_link": 5, "tag_prep": 6, "result": 12}
+search_excel_name = '_search.xlsx'
 
 os.system("cls")
 
@@ -68,10 +78,10 @@ except Exception as e:
     edgeBrowser.quit()
     quit()
 
-key0 = "3000"
+key0 = "4000"
 
 try:
-    wb = xl.load_workbook('Data from DCS Extract.xlsx')
+    wb = xl.load_workbook(search_excel_name)
 except Exception as e:
     print(f'Cannot open the excel file: {str(e)}')
     quit()
@@ -82,7 +92,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     if sheet.cell(row, excel_columns["tag"]).value in (None, ''):
         break
 
-        # stop for test purposes
+    # stop for test purposes
     if count == 50000:
         break
 
@@ -98,11 +108,6 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
 
     card = sheet.cell(row, excel_columns["card"]).value
 
-    # adding 300- before the tag excludes a lot of excessive results such cables, but
-    # may prevent some tags with 3000- to be found, so you can try 3000- after 300-
-    # by replacing key0[:-1] with key0 and start the script one more time, clearing the
-    # Result columns in the Excel file (key0_param = key0)
-
     key0_param = key0[:-1]
 
     tag_prepared_for_search = prepare_tag_for_search(sheet.cell(row, excel_columns["tag"]).value, key0_param)
@@ -115,21 +120,20 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     sheet.cell(row, excel_columns["tag_prep"]).style = "Hyperlink"
 
     # 2 tries to search, one with desc == '*', if no success, with desc == first letter of tag desc + '*'
-    for i in range(2):
-        if i == 0:
-            obj_desc = '*'
-        else:
-            if sheet.cell(row, excel_columns["desc"]).value in ('', None):
-                break
-            obj_desc = sheet.cell(row, excel_columns["desc"]).value[0] + '*'
+    obj_descs = list()
+    obj_descs.append('*')
+    if sheet.cell(row, excel_columns["desc"]).value not in ('', None):
+        obj_descs.append(sheet.cell(row, excel_columns["desc"]).value[0] + '*')
 
+    node_id = ''
+    for obj_desc in obj_descs:
         llink = 'http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch' \
                 '&obj_type_id=4' \
                 '&obj_type_name=Tag' \
                 f'&cls_obj_name=&obj_name={tag_prepared_for_search}' \
                 f'&obj_desc={obj_desc}' \
                 f'&key0={key0}'
-        if i == 0:
+        if obj_desc == '*':
             sheet.cell(row, excel_columns["tag"]).hyperlink = llink
         sheet.cell(row, excel_columns["tag"]).style = "Hyperlink"
         edgeBrowser.get(llink)
@@ -141,8 +145,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         try:
             node_id = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute(name='id')
         except NoSuchElementException:
-            sheet.cell(row, excel_columns[
-                "result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
+            sheet.cell(row, excel_columns["result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
 
         if node_id != '':
             llink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ClickNode" \
@@ -159,11 +162,15 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     if node_id == '':
         continue
 
-    # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT'
-    xpaths = [
-        "//a[contains(translate(., 'loop', 'LOOP'), 'LOOP') and not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and ""not(contains(translate(., 'fire', 'FIRE'), 'FIRE'))]"]
+    # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT' if ALF111
+    xpaths = []
+    xpaths.append("//a[contains(translate(., 'instrument loop', 'INSTRUMENT LOOP'), 'INSTRUMENT LOOP') and "    
+                  "not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and "                  
+                  "not(contains(translate(., 'fire', 'FIRE'), 'FIRE')) and "
+                  "not(contains(translate(., 'index', 'INDEX'), 'INDEX')) and " 
+                  "not(contains(translate(., 'punch', 'PUNCH'), 'PUNCH'))]")
     if card == "ALF111":
-        xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")
+        xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")                  
 
     doc_number = ''
 
@@ -202,7 +209,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     llink = f"http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/relationsandmethods.asp?TreeNodeID={node_id}&ScrollPosX=0&ScrollPosY=0"
     edgeBrowser.get(llink)
 
-    element_xpath = "//a[text()='Jump in UNICA compound document']"
+    element_xpath = "//a[text()='Jump in Unica compound document']"
     try:
         llink = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute("href")
     except NoSuchElementException:
@@ -214,8 +221,6 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         continue
 
     edgeBrowser.get(llink)
-
-    # time.sleep(3)
 
     window_after = edgeBrowser.window_handles[1]
     edgeBrowser.switch_to.window(window_after)
@@ -243,12 +248,12 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
     # save Excel file every 10 rows
     if count % 10 == 0 and count > 0:
         try:
-            wb.save('Data from DCS Extract.xlsx')
+            wb.save(search_excel_name)
         except Exception as e:
             print(f'Cannot save the excel file: {str(e)}')
 
 try:
-    wb.save('Data from DCS Extract.xlsx')
+    wb.save(search_excel_name)
 except Exception as e:
     print(f'Cannot save the excel file: {str(e)}')
 

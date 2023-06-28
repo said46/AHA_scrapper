@@ -16,3 +16,5 @@ https://sww-llsak.sakhalinenergy.ru/glasseic/llisapi.dll?func=doc.Fetch&nodeid=2
 
 
 edge://settings/content/pdfDocuments
+
+C:\Apps\Utilites\PortableGit-2.41.0-64-bit.7z\bin\git.exe log --all --full-history -- "_search.xlsx"
