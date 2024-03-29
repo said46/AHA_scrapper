@@ -3,18 +3,11 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import InvalidSelectorException
 from selenium.webdriver.edge.options import Options as EdgeOptions
-import ctypes
 import os
 import openpyxl as xl
+from my_utils import message_box 
 
 
-def message_box(title, text, style):
-    return ctypes.windll.user32.MessageBoxW(0, text, title, style)
-
-
-#  Styles:
-#  0 : OK *** #  1 : OK | Cancel *** 2 : Abort | Retry | Ignore *** 3 : Yes | No | Cancel ***  
-#  4 : Yes | No *** 5 : Retry | Cancel *** 6 : Cancel | Try Again | Continue
 
 
 def prepare_tag_for_search(tag: str, asset: str) -> str:
@@ -58,6 +51,7 @@ def prepare_tag_for_search(tag: str, asset: str) -> str:
     # temp end
     result = '*' + asset + '-' + tag[:3] + '-' + middle_part + '-' + tag[last_part_beginning_index:]
     return result
+
 
 
 excel_columns = {"tag": 1, "desc": 2, "card": 3, "folder_link": 4, "doc_link": 5, "tag_prep": 6, "result": 12}
@@ -144,8 +138,7 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         try:
             node_id = edgeBrowser.find_element(By.XPATH, element_xpath).get_attribute(name='id')
         except NoSuchElementException:
-            sheet.cell(row, excel_columns[
-                "result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
+            sheet.cell(row, excel_columns["result"]).value = "Node 'Document(s)' is not found (number of search results is 0 or >1)"
 
         if node_id != '':
             llink = "http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ClickNode" \
@@ -163,13 +156,14 @@ for count, row in enumerate(range(2, sheet.max_row + 1)):
         continue
 
     # 2 tries to find doc_number, one with 'LOOP', another with 'SEGMENT' if ALF111
-    xpaths = ["//a[contains(translate(., 'instrument loop', 'INSTRUMENT LOOP'), 'INSTRUMENT LOOP') and "
-              "not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and "
-              "not(contains(translate(., 'fire', 'FIRE'), 'FIRE')) and "
-              "not(contains(translate(., 'index', 'INDEX'), 'INDEX')) and "
-              "not(contains(translate(., 'punch', 'PUNCH'), 'PUNCH'))]"]
+    xpaths = []
+    xpaths.append("//a[contains(translate(., 'instrument loop', 'INSTRUMENT LOOP'), 'INSTRUMENT LOOP') and "    
+                  "not(contains(translate(., 'typical', 'TYPICAL'), 'TYPICAL')) and "                  
+                  "not(contains(translate(., 'fire', 'FIRE'), 'FIRE')) and "
+                  "not(contains(translate(., 'index', 'INDEX'), 'INDEX')) and " 
+                  "not(contains(translate(., 'punch', 'PUNCH'), 'PUNCH'))]")
     if card == "ALF111":
-        xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")
+        xpaths.append("//a[contains(translate(., 'segment', 'SEGMENT'), 'SEGMENT')]")                  
 
     doc_number = ''
 
