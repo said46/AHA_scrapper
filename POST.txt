@@ -1,0 +1,20 @@
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/default.asp?AHAContextID=1
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/methods/ObjectFind.asp?param1=Tag
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/search/Search.asp?obj_type_id=4&obj_type_name=Tag&cls_obj_name=&obj_name=*001-PZT-105*&obj_desc=*well*&key0=4000
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch&obj_type_id=4&obj_type_name=Tag&cls_obj_name=&obj_name=*001-PZT-105*&obj_desc=*well*&key0=4000
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ClickNode&ScrollPosX=0&ScrollPosY=0&TreeNodeID=2583355&IsObjectNode=False
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/treeview/tree.asp?Option=ObjectSearch&obj_type_id=7&obj_type_name=Document&cls_obj_name=AhaQryStdRel.FindObjectWoRev%28%27Document%27%2C%27document+issue+date%27%29&obj_name=*4000-T-01-30-D-4900-21-E*&obj_desc=*
+
+http://sww-edw.sakhalinenergy.ru/aha_seic_sww/asp/relationsandmethods.asp?TreeNodeID=2619639&ScrollPosX=0&ScrollPosY=0
+
+https://sww-llsak.sakhalinenergy.ru/glasseic/llisapi.dll?func=doc.Fetch&nodeid=20285608&viewType=1
+
+
+edge://settings/content/pdfDocuments
+
+C:\Apps\Utilites\PortableGit-2.41.0-64-bit.7z\bin\git.exe log --all --full-history -- "_search.xlsx"
